@@ -6,11 +6,11 @@
 ##
 
 
-NAME = graphical
+NAME = mpaint
 
 SRC = *.c
 
-FLAGS = -lcsfml-graphics -lcsfml-window
+FLAGS = -lcsfml-graphics -lcsfml-window -lm
 
 INCLUDES = include/
 

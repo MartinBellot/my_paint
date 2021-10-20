@@ -5,9 +5,11 @@
 ** SCREEN_SAVER/
 */
 
-#include "framebuffer.h"
-#include "my.h"
+#include "include/framebuffer.h"
+#include "include/my.h"
 #include <math.h>
+
+void put_pixel(framebuffer_t *framebuffer, unsigned int x, unsigned int y, sfColor color);
 
 int draw_circle(framebuffer_t *framebuffer, sfVector2i center, int rad, sfColor color)
 {
