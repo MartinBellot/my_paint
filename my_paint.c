@@ -17,6 +17,8 @@
 
 framebuffer_t *framebuffer_create(unsigned int width, unsigned int height);
 void framebuffer_destroy(framebuffer_t *framebuffer);
+int draw_circle(framebuffer_t *framebuffer, sfVector2i center, int rad, sfColor color);
+sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor colors);
 
 void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffer, sfRenderWindow *window)
 {
@@ -60,59 +62,15 @@ void draw_square(framebuffer_t *framebuffer, sfVector2u position, unsigned int s
     }
 }
 
-sfVector2u getPos(sfRenderWindow *WINDOW)
+sfVector2i getPos(sfRenderWindow *WINDOW)
 {
-    sfVector2u pos;
+    sfVector2i pos;
     pos.x = sfMouse_getPositionRenderWindow(WINDOW).x;
     pos.y = sfMouse_getPositionRenderWindow(WINDOW).y;
     return (pos);
 }
 
-sfText *generate_text(char *text, float x, float y, int size)
-{
-    sfVector2f pos;
-    pos.x = x;
-    pos.y = y;
-    sfText *data = sfText_create();
-    sfText_setString(data, text);
-    sfText_setCharacterSize(data, size);
-    sfText_setColor(data, sfWhite);
-    sfText_setPosition(data, pos);
-    return (data);
-}
-
-int is_num(char c)
-{
-    if (c >= '0' && c <= '9')
-        return 1;
-    return 0;
-}
-
-sfColor choose_color(void) 
-{
-    char  *r, *g, *b = 0;
-    sfColor color;
-    int i = 0;
-    FILE *zenity;
-    char *justnumber;
-    char answer[20];
-    if ((zenity = popen("zenity --color-selection --show-palette","r")) != NULL)
-        fgets(answer,sizeof(answer),zenity);
-    printf("%s\n",answer);
-    while (answer[i] != '\0') {
-        if (answer[i] == 'r' || answer[i] == 'g' || answer[i] == 'b' || answer[i] == '(' || answer[i] == ')' || answer[i] == ',');
-        else {
-            char merge[2];
-            merge[0] = answer[i];
-            merge[1] = '\0';
-            strncat(justnumber, merge, 1);
-        }
-    }
-    printf("%s", justnumber);
-    return (color);
-}
-
-void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuffer, sfColor *color)
+void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuffer, sfColor *color, int *size)
 {
     while (sfRenderWindow_pollEvent(WINDOW, &event)) {
         if (event.type == sfEvtClosed) {
@@ -120,8 +78,8 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
         }
         if (event.type == sfEvtMouseMoved) {
             if (sfMouse_isButtonPressed(sfMouseLeft)) {
-                sfVector2u posi = getPos(WINDOW);
-                draw_square(framebuffer, posi, 4, *color);
+                sfVector2i posi = getPos(WINDOW);
+                draw_circle(framebuffer, posi, *size, *color);
             }
         }
         if (event.type == sfEvtKeyPressed) {
@@ -133,16 +91,37 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
                 *color = sfBlue;
             if (sfKeyboard_isKeyPressed(sfKeyNum4))
                 *color = sfWhite;
+            if (sfKeyboard_isKeyPressed(sfKeyG))
+                *color = sfBlack;
+            if (sfKeyboard_isKeyPressed(sfKeyAdd))
+                *size += 1;
+            if (sfKeyboard_isKeyPressed(sfKeySubtract))
+                if (*size >= 1)
+                    *size -= 1;
+            if (sfKeyboard_isKeyPressed(sfKeyEscape))
+                sfRenderWindow_close(WINDOW);
         }
     }
 }
 
-int display(void)
+int display(int ac, char **av)
 {
-    //choose_color();
+    printf("Starting...\n");
     char *title = "My paint";
-    sfVideoMode mode = {800, 600};
-    sfRenderWindow *WINDOW = sfRenderWindow_create(mode, title, sfClose | sfResize, NULL);
+    sfVideoMode mode;
+    sfRenderWindow *WINDOW;
+    if (ac > 1) {
+        if (av[1][0] == '-' && av[1][1] == 'f') {
+            mode.width = 1920;
+            mode.height = 1080;
+            WINDOW = sfRenderWindow_create(mode, title, sfClose | sfFullscreen, NULL);
+        }
+    }
+    else {
+        mode.width = 800;
+        mode.height = 600;
+        WINDOW = sfRenderWindow_create(mode, title, sfClose, NULL);
+    }
     sfEvent event;
     framebuffer_t *framebuffer = framebuffer_create(mode.width, mode.height);
     sfTexture *texture = sfTexture_create(mode.width, mode.height);
@@ -150,25 +129,38 @@ int display(void)
     sfSprite_setTexture(sprite, texture, sfTrue);
     sfTexture_setSmooth(texture, sfTrue);
     sfColor color = sfWhite;
-
-    sfText *text_title = generate_text(title, 300.0, 300.0, 500);
+    int size = 4;
+    sfText *text = generate_text("MPaint (v0.1)", (sfVector2f){0,0}, 20, sfWhite);
 
     while (sfRenderWindow_isOpen(WINDOW)) {
-        check_event(WINDOW, event, framebuffer, &color);
+        check_event(WINDOW, event, framebuffer, &color, &size);
         
         sfRenderWindow_clear(WINDOW, sfBlack);    
         sfTexture_updateFromPixels(texture, framebuffer->pixels, mode.width, mode.height, 0, 0);
         sfRenderWindow_drawSprite(WINDOW, sprite, NULL);
-        sfRenderWindow_drawText(WINDOW, text_title, NULL);
+        sfRenderWindow_drawText(WINDOW, text, NULL);
         sfRenderWindow_display(WINDOW);
     }
     sfImage *image = sfTexture_copyToImage(texture);
     sfImage_saveToFile(image, "rendus/output.jpg");
     destroy_all(texture, sprite, framebuffer, WINDOW);
+    printf("Bye :)\n");
 }
 
-int main(void)
+int main(int ac, char **av)
 {
-    display();
+    if (ac > 1) {
+        if (av[1][0] == '-') {
+            if (av[1][1] == 'h') {
+                printf("{-- HELP MENU --}\n\n");
+                printf("Shortcuts -> [g]Eraser    [r]Reset\n");
+                printf("             [+]Increase  [-]Decrease\n\n");
+                printf("mpaint -h: Menu help\n");
+                printf("mpaint -o: Choose output file.\n");
+                exit(EXIT_SUCCESS);
+            }
+        }
+    }
+    display(ac, av);
     return (EXIT_SUCCESS);
 }
