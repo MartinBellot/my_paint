@@ -18,6 +18,7 @@
 framebuffer_t *framebuffer_create(unsigned int width, unsigned int height);
 void framebuffer_destroy(framebuffer_t *framebuffer);
 int draw_circle(framebuffer_t *framebuffer, sfVector2i center, int rad, sfColor color);
+sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor colors);
 
 void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffer, sfRenderWindow *window)
 {
@@ -97,16 +98,30 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
             if (sfKeyboard_isKeyPressed(sfKeySubtract))
                 if (*size >= 1)
                     *size -= 1;
+            if (sfKeyboard_isKeyPressed(sfKeyEscape))
+                sfRenderWindow_close(WINDOW);
         }
     }
 }
 
-int display(void)
+int display(int ac, char **av)
 {
     printf("Starting...\n");
     char *title = "My paint";
-    sfVideoMode mode = {800, 600};
-    sfRenderWindow *WINDOW = sfRenderWindow_create(mode, title, sfClose | sfResize, NULL);
+    sfVideoMode mode;
+    sfRenderWindow *WINDOW;
+    if (ac > 1) {
+        if (av[1][0] == '-' && av[1][1] == 'f') {
+            mode.width = 1920;
+            mode.height = 1080;
+            WINDOW = sfRenderWindow_create(mode, title, sfClose | sfFullscreen, NULL);
+        }
+    }
+    else {
+        mode.width = 800;
+        mode.height = 600;
+        WINDOW = sfRenderWindow_create(mode, title, sfClose, NULL);
+    }
     sfEvent event;
     framebuffer_t *framebuffer = framebuffer_create(mode.width, mode.height);
     sfTexture *texture = sfTexture_create(mode.width, mode.height);
@@ -115,6 +130,7 @@ int display(void)
     sfTexture_setSmooth(texture, sfTrue);
     sfColor color = sfWhite;
     int size = 4;
+    sfText *text = generate_text("MPaint (v0.1)", (sfVector2f){0,0}, 20, sfWhite);
 
     while (sfRenderWindow_isOpen(WINDOW)) {
         check_event(WINDOW, event, framebuffer, &color, &size);
@@ -122,6 +138,7 @@ int display(void)
         sfRenderWindow_clear(WINDOW, sfBlack);    
         sfTexture_updateFromPixels(texture, framebuffer->pixels, mode.width, mode.height, 0, 0);
         sfRenderWindow_drawSprite(WINDOW, sprite, NULL);
+        sfRenderWindow_drawText(WINDOW, text, NULL);
         sfRenderWindow_display(WINDOW);
     }
     sfImage *image = sfTexture_copyToImage(texture);
@@ -144,6 +161,6 @@ int main(int ac, char **av)
             }
         }
     }
-    display();
+    display(ac, av);
     return (EXIT_SUCCESS);
 }

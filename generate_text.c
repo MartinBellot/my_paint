@@ -6,7 +6,7 @@
 */
 
 #include "include/framebuffer.h"
-#include "my.h"
+#include "include/my.h"
 
 sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor colors)
 {
