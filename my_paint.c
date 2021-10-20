@@ -127,6 +127,7 @@ int display(void)
     sfImage *image = sfTexture_copyToImage(texture);
     sfImage_saveToFile(image, "rendus/output.jpg");
     destroy_all(texture, sprite, framebuffer, WINDOW);
+    printf("Bye :)\n");
 }
 
 int main(int ac, char **av)
@@ -135,7 +136,8 @@ int main(int ac, char **av)
         if (av[1][0] == '-') {
             if (av[1][1] == 'h') {
                 printf("{-- HELP MENU --}\n\n");
-                printf("Shortcuts -> [g]Eraser  [r]Reset\n\n");
+                printf("Shortcuts -> [g]Eraser    [r]Reset\n");
+                printf("             [+]Increase  [-]Decrease\n\n");
                 printf("mpaint -h: Menu help\n");
                 printf("mpaint -o: Choose output file.\n");
                 exit(EXIT_SUCCESS);
