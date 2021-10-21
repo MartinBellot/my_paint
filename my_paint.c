@@ -18,7 +18,7 @@ void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffe
 int display(int ac, char **av)
 {
     printf("Starting...\n");
-    char *title = "My paint";
+    char *title = ">> My paint";
     sfVideoMode mode;
     sfRenderWindow *WINDOW;
     if (ac > 1) {
@@ -64,7 +64,7 @@ int display(int ac, char **av)
     sfImage_saveToFile(image, "rendus/output.jpg");
     sfImage_copy(image);
     destroy_all(texture, screen, framebuffer, WINDOW);
-    printf("Bye :)\n");
+    printf("Bye | File saved to output folder and copy into clipboard :)\n");
     exit(EXIT_SUCCESS);
 }
 
