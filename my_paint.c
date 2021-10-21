@@ -7,13 +7,15 @@
 
 #include "include/mypaint.h"
 
-void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffer, sfRenderWindow *window)
+void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffer, sfRenderWindow *window, sfText *text)
 {
     sfTexture_destroy(texture);
     sfSprite_destroy(sprite);
     framebuffer_destroy(framebuffer);
     sfRenderWindow_destroy(window);
+    sfText_destroy(text);
 }
+
 
 int display(int ac, char **av)
 {
@@ -43,7 +45,7 @@ int display(int ac, char **av)
     int brush_size = 4;
 
     
-    sfText *text = generate_text("MPaint (v0.1)", (sfVector2f){0,0}, 20, sfWhite);
+    sfText *text = generate_text(">>mpaint-(v1.4)", (sfVector2f){0,0}, 20, sfWhite);
 
     sfRenderWindow_setMouseCursorVisible(WINDOW, sfFalse);
 
@@ -55,16 +57,17 @@ int display(int ac, char **av)
         sfRenderWindow_drawSprite(WINDOW, screen, NULL);
         sfRenderWindow_drawText(WINDOW, text, NULL);
 
-        sfCircleShape *cursor = get_cursor(WINDOW, brush_size, color);
+        sfCircleShape *curs = get_cursor(WINDOW, brush_size, color);
 
-        sfRenderWindow_drawCircleShape(WINDOW, cursor, NULL);
+        sfRenderWindow_drawCircleShape(WINDOW, curs, NULL);
         sfRenderWindow_display(WINDOW);
+        sfCircleShape_destroy(curs);
     }
     sfImage *image = sfTexture_copyToImage(texture);
     sfImage_saveToFile(image, "rendus/output.jpg");
     sfImage_copy(image);
-    destroy_all(texture, screen, framebuffer, WINDOW);
-    printf("Bye | File saved to output folder and copy into clipboard :)\n");
+    destroy_all(texture, screen, framebuffer, WINDOW, text);
+    printf("Bye !| File saved to output folder and copy into clipboard :)\n");
     exit(EXIT_SUCCESS);
 }
 

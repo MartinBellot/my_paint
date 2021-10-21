@@ -9,7 +9,6 @@
 
 sfCircleShape *get_cursor(sfRenderWindow *WINDOW, int brush_size, sfColor color)
 {
-    //CURSOR:
     sfVector2f cursor_pos = getMouseposf(WINDOW);
     cursor_pos.x -= brush_size;
     cursor_pos.y -= brush_size;

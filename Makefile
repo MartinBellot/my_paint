@@ -5,7 +5,6 @@
 ## makefile for day 12
 ##
 
-
 NAME = mpaint
 
 SRC = *.c

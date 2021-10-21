@@ -30,6 +30,13 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
                 *color = sfWhite;
             if (sfKeyboard_isKeyPressed(sfKeyG))
                 *color = sfBlack;
+            if (sfKeyboard_isKeyPressed(sfKeyR)) {
+                for (int x=0; x<framebuffer->width; x++) {
+                    for (int y=0; y<framebuffer->height; y++) {
+                        put_pixel(framebuffer, x, y, sfBlack);
+                    }
+                }
+            }
             if (sfKeyboard_isKeyPressed(sfKeyAdd))
                 *size += 1;
             if (sfKeyboard_isKeyPressed(sfKeySubtract))

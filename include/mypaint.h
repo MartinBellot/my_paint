@@ -25,3 +25,4 @@ sfCircleShape *generate_circleshape(int radius, sfVector2f position, sfColor col
 sfVector2i getMousePosi(sfRenderWindow *WINDOW);
 sfVector2f getMouseposf(sfRenderWindow *WINDOW);
 sfCircleShape *get_cursor(sfRenderWindow *WINDOW, int brush_size, sfColor color);
+void put_pixel(framebuffer_t *framebuffer, unsigned int x, unsigned int y, sfColor color);
