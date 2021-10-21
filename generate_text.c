@@ -5,15 +5,14 @@
 ** This function generate texte in CSFML
 */
 
-#include "include/framebuffer.h"
-#include "include/my.h"
+#include "include/mypaint.h"
 
 sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor colors)
 {
     sfFont *font = NULL;
     sfText *text = NULL;
 
-    font = sfFont_createFromFile("arial.ttf");
+    font = sfFont_createFromFile("polices/arial.ttf");
     if (!font)
         return NULL;
     text = sfText_create();

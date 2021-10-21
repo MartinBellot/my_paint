@@ -5,20 +5,7 @@
 ** Open, display, and others...
 */
 
-#include <stdlib.h>
-#include <SFML/Window.h>
-#include <SFML/Graphics.h>
-#include <SFML/Graphics/Texture.h>
-#include <SFML/Graphics/Text.h>
-#include "include/framebuffer.h"
-#include "include/my.h"
-#include <stdio.h>
-#include <string.h>
-
-framebuffer_t *framebuffer_create(unsigned int width, unsigned int height);
-void framebuffer_destroy(framebuffer_t *framebuffer);
-int draw_circle(framebuffer_t *framebuffer, sfVector2i center, int rad, sfColor color);
-sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor colors);
+#include "include/mypaint.h"
 
 void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffer, sfRenderWindow *window)
 {
@@ -26,82 +13,6 @@ void destroy_all(sfTexture *texture, sfSprite *sprite, framebuffer_t *framebuffe
     sfSprite_destroy(sprite);
     framebuffer_destroy(framebuffer);
     sfRenderWindow_destroy(window);
-}
-
-void put_pixel(framebuffer_t *framebuffer, unsigned int x, unsigned int y, sfColor color)
-{
-    if (x < framebuffer->width && y < framebuffer->height) {
-        framebuffer->pixels[(y*framebuffer->width+x)*4] = color.r;
-        framebuffer->pixels[(y*framebuffer->width+x)*4 +1] = color.g;
-        framebuffer->pixels[(y*framebuffer->width+x)*4 +2] = color.b;
-        framebuffer->pixels[(y*framebuffer->width+x)*4 +3] = color.a;
-    }
-}
-
-void draw_square(framebuffer_t *framebuffer, sfVector2u position, unsigned int size, sfColor color)
-{
-    int x = position.x-(size/2);
-    int y = position.y-(size/2);
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < size; j++) {
-            put_pixel(framebuffer, x, y, color);
-            x++;
-        }
-        x = position.x-(size/2);
-        y = position.y+(size/2);
-    }
-    x = position.x-(size/2);
-    y = position.y-(size/2);
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < size; j++) {
-            put_pixel(framebuffer, x, y, color);
-            y++;
-        }
-        x = position.x+(size/2);
-        y = position.y-(size/2);
-    }
-}
-
-sfVector2i getPos(sfRenderWindow *WINDOW)
-{
-    sfVector2i pos;
-    pos.x = sfMouse_getPositionRenderWindow(WINDOW).x;
-    pos.y = sfMouse_getPositionRenderWindow(WINDOW).y;
-    return (pos);
-}
-
-void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuffer, sfColor *color, int *size)
-{
-    while (sfRenderWindow_pollEvent(WINDOW, &event)) {
-        if (event.type == sfEvtClosed) {
-            sfRenderWindow_close(WINDOW);
-        }
-        if (event.type == sfEvtMouseMoved) {
-            if (sfMouse_isButtonPressed(sfMouseLeft)) {
-                sfVector2i posi = getPos(WINDOW);
-                draw_circle(framebuffer, posi, *size, *color);
-            }
-        }
-        if (event.type == sfEvtKeyPressed) {
-            if (sfKeyboard_isKeyPressed(sfKeyNum1))
-                *color = sfRed;
-            if (sfKeyboard_isKeyPressed(sfKeyNum2))
-                *color = sfGreen;
-            if (sfKeyboard_isKeyPressed(sfKeyNum3))
-                *color = sfBlue;
-            if (sfKeyboard_isKeyPressed(sfKeyNum4))
-                *color = sfWhite;
-            if (sfKeyboard_isKeyPressed(sfKeyG))
-                *color = sfBlack;
-            if (sfKeyboard_isKeyPressed(sfKeyAdd))
-                *size += 1;
-            if (sfKeyboard_isKeyPressed(sfKeySubtract))
-                if (*size >= 1)
-                    *size -= 1;
-            if (sfKeyboard_isKeyPressed(sfKeyEscape))
-                sfRenderWindow_close(WINDOW);
-        }
-    }
 }
 
 int display(int ac, char **av)
@@ -125,8 +36,8 @@ int display(int ac, char **av)
     sfEvent event;
     framebuffer_t *framebuffer = framebuffer_create(mode.width, mode.height);
     sfTexture *texture = sfTexture_create(mode.width, mode.height);
-    sfSprite *sprite = sfSprite_create();
-    sfSprite_setTexture(sprite, texture, sfTrue);
+    sfSprite *screen = sfSprite_create();
+    sfSprite_setTexture(screen, texture, sfTrue);
     sfTexture_setSmooth(texture, sfTrue);
     sfColor color = sfWhite;
     int size = 4;
@@ -134,17 +45,19 @@ int display(int ac, char **av)
 
     while (sfRenderWindow_isOpen(WINDOW)) {
         check_event(WINDOW, event, framebuffer, &color, &size);
-        
+    
         sfRenderWindow_clear(WINDOW, sfBlack);    
         sfTexture_updateFromPixels(texture, framebuffer->pixels, mode.width, mode.height, 0, 0);
-        sfRenderWindow_drawSprite(WINDOW, sprite, NULL);
+        sfRenderWindow_drawSprite(WINDOW, screen, NULL);
         sfRenderWindow_drawText(WINDOW, text, NULL);
         sfRenderWindow_display(WINDOW);
     }
     sfImage *image = sfTexture_copyToImage(texture);
     sfImage_saveToFile(image, "rendus/output.jpg");
-    destroy_all(texture, sprite, framebuffer, WINDOW);
+    sfImage_copy(image);
+    destroy_all(texture, screen, framebuffer, WINDOW);
     printf("Bye :)\n");
+    exit(EXIT_SUCCESS);
 }
 
 int main(int ac, char **av)
