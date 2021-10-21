@@ -45,6 +45,8 @@ int display(int ac, char **av)
     
     sfText *text = generate_text("MPaint (v0.1)", (sfVector2f){0,0}, 20, sfWhite);
 
+    sfRenderWindow_setMouseCursorVisible(WINDOW, sfFalse);
+
     while (sfRenderWindow_isOpen(WINDOW)) {
         check_event(WINDOW, event, framebuffer, &color, &brush_size);
     
