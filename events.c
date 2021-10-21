@@ -7,14 +7,6 @@
 
 #include "include/mypaint.h"
 
-sfVector2i getMousePos(sfRenderWindow *WINDOW)
-{
-    sfVector2i pos;
-    pos.x = sfMouse_getPositionRenderWindow(WINDOW).x;
-    pos.y = sfMouse_getPositionRenderWindow(WINDOW).y;
-    return (pos);
-}
-
 void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuffer, sfColor *color, int *size)
 {
     while (sfRenderWindow_pollEvent(WINDOW, &event)) {
@@ -23,7 +15,7 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
         }
         if (event.type == sfEvtMouseMoved) {
             if (sfMouse_isButtonPressed(sfMouseLeft)) {
-                sfVector2i posi = getMousePos(WINDOW);
+                sfVector2i posi = getMousePosi(WINDOW);
                 draw_circle(framebuffer, posi, *size, *color);
             }
         }

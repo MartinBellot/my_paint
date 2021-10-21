@@ -40,16 +40,22 @@ int display(int ac, char **av)
     sfSprite_setTexture(screen, texture, sfTrue);
     sfTexture_setSmooth(texture, sfTrue);
     sfColor color = sfWhite;
-    int size = 4;
+    int brush_size = 4;
+
+    
     sfText *text = generate_text("MPaint (v0.1)", (sfVector2f){0,0}, 20, sfWhite);
 
     while (sfRenderWindow_isOpen(WINDOW)) {
-        check_event(WINDOW, event, framebuffer, &color, &size);
+        check_event(WINDOW, event, framebuffer, &color, &brush_size);
     
         sfRenderWindow_clear(WINDOW, sfBlack);    
         sfTexture_updateFromPixels(texture, framebuffer->pixels, mode.width, mode.height, 0, 0);
         sfRenderWindow_drawSprite(WINDOW, screen, NULL);
         sfRenderWindow_drawText(WINDOW, text, NULL);
+
+        sfCircleShape *cursor = get_cursor(WINDOW, brush_size, color);
+
+        sfRenderWindow_drawCircleShape(WINDOW, cursor, NULL);
         sfRenderWindow_display(WINDOW);
     }
     sfImage *image = sfTexture_copyToImage(texture);

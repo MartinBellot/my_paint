@@ -23,3 +23,12 @@ sfText *generate_text(char *str, sfVector2f position, int size_text, sfColor col
     sfText_setColor(text, colors);
     return text;
 }
+
+sfCircleShape *generate_circleshape(int radius, sfVector2f position, sfColor color)
+{
+    sfCircleShape *circle = sfCircleShape_create();
+    sfCircleShape_setRadius(circle, radius);
+    sfCircleShape_setPosition(circle, position);
+    sfCircleShape_setFillColor(circle, color); 
+    return (circle);
+}
