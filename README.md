@@ -11,7 +11,7 @@
 ## Install
 
 ```sh
-make
+make build
 ```
 
 ## Usage
