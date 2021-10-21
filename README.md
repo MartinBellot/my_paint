@@ -20,7 +20,7 @@ make
 ./mpaint -h
 ```
 
-## Author
+## Authors
 
 👤 **Martin Bellot**
 
