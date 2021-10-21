@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to My Paint PROJECT 👋</h1>
+<h1 align="center">My Paint PROJECT 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.2-blue.svg?cacheSeconds=2592000" />
   <a href="https://twitter.com/kkdefs" target="_blank">
@@ -31,6 +31,10 @@ make build
 👤 **Nicolas Le Hasif**
 
 * Github: [@Nicolas-LH](https://github.com/Nicolas-LH)
+
+👤 **Aurélien Le Rouillé**
+
+* Github: [@AurelienEpitech](https://github.com/AurelienEpitech)
 
 ## Show your support
 
