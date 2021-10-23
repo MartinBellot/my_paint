@@ -17,3 +17,5 @@ all:
 	gcc -o ${NAME} ${SRC} ${FLAGS} -I ${INCLUDES}
 
 build: all
+
+ouille: all
