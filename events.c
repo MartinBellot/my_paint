@@ -45,5 +45,11 @@ void check_event(sfRenderWindow *WINDOW, sfEvent event, framebuffer_t *framebuff
             if (sfKeyboard_isKeyPressed(sfKeyEscape))
                 sfRenderWindow_close(WINDOW);
         }
+        if (event.type == sfEvtMouseWheelScrolled) {
+            if (event.mouseWheelScroll.delta > 0)
+                *size += 1;
+            else 
+                *size -= 1;
+        }
     }
 }
