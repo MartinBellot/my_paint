@@ -76,11 +76,10 @@ int main(int ac, char **av)
     if (ac > 1) {
         if (av[1][0] == '-') {
             if (av[1][1] == 'h') {
-                printf("{-- HELP MENU --}\n\n");
-                printf("Shortcuts -> [g]Eraser    [r]Reset\n");
-                printf("             [+]Increase  [-]Decrease\n\n");
-                printf("mpaint -h: Menu help\n");
-                printf("mpaint -o: Choose output file.\n");
+                printf("       {-- HELP MENU (v0.1)--}\n\n");
+                printf("./mpaint -> Launch mpaint.\n");
+                printf("./mpaint -f -> Launch mpaint in fullscreen.\n\n");
+                printf("The number buttons are for color, the R button is for reset and G is for eraser.\nScroll wheeling is used to adjust the size of the brush.\n");
                 exit(EXIT_SUCCESS);
             }
         }
